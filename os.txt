@@ -1,0 +1,404 @@
+//1A)FCFS
+#include<stdio.h>
+void main()
+{
+int n,wt[10],bt[10],tt[ 10],i,j,wl=0,tl=0;
+float aw,at;
+printf ("enter no of processes:");
+scanf ("%d",&n) ;
+printf("enter the burst time off processes:");
+for (i=0;i<n;i++)
+scanf("%d",&bt[i]);
+for(i=0;i<n;i++)
+{
+wt[0]=0;
+tt[0]=bt[0];
+wt[i+1]=bt[i]+wt[i];
+tt[i+1]=tt[i]+bt[i+1];
+wl=wl+wt[i];
+tl=tl+tt[i];
+}
+aw=wl/n;
+at=tl/n;
+printf("\nbt\twt\ttt\n");
+for(i=0;i<n;i++)
+printf("%d\t%d\t%d\n",bt[i],wt[i],tt[i]);
+printf ("aw=%f\nat=%f\n",aw,at);
+}
+
+//1B)SJF
+
+#include<stdio.h>
+void main()
+{
+int i,j,pbt[10],pwt[10],ptt[10],t,n,wl=0,tl=0;
+float aw,at;
+printf("enter no of processes:");
+scanf("%d",&n) ;
+printf("enter the burst time of processes:");
+for(i=0;i<n;i++)
+scanf("%d",&pbt[i]);
+for(i=0;i<n;i++)
+{
+for(j=0;j<n;j++)
+{
+if(pbt[i]<pbt[j])
+{
+t=pbt[i];
+pbt[i]=pbt[j];
+pbt[j]=t;
+}}}
+for(i=0;i<n;i++)
+printf("%d",pbt[i]);
+for(i=0;i<n;i++)
+{
+pwt[0]=0;
+ptt[0]=pbt[0];
+pwt[i+1]=pbt[i]+pwt[i];
+ptt[i+1]=ptt[i]+pbt[i+1];
+wl=wl+pwt[i];
+tl=tl+ptt[i];
+}
+aw=wl/n;
+at=tl/n;
+printf("\npbt\tpwt\tptt\n");
+for(i=0;i<n;i++)
+printf("%d\t%d\t%d\n",pbt[i],pwt[i],ptt[i]);
+printf("aw=%f\t%f\n",aw,at);
+}
+
+//1C)roundrobin
+
+#include<stdio.h>
+void main()
+{
+int st[10],bt[10],wt[10],tat[10],n,tq;
+int i,j,count=0,swt=0,stat=0,temp,sq=0;
+float awt=0.0,atat=0.0;
+printf("enter no of processes:");
+scanf ( "%d",&n) ;
+printf("enter burst time for sequences:");
+for(i=0;i<n;i++)
+{
+scanf("%d",&bt[i]);
+st[i]=bt[i];
+}
+printf("enter time quantam:");
+scanf("%d",&tq) ;
+while(1)
+{
+for (i=0,count=0;i<n;i++)
+{
+temp=tq;
+if(st[i]==0)
+{
+count++;
+continue;
+}
+if(st[i]>tq)
+st[i]=st[i]-tq;
+else
+if(st[j]>=0)
+{
+temp=st[i];
+st[i]=0;
+}
+sq=sq+temp;
+tat[i]=sq;
+}
+if(n==count)
+break;
+}
+for(i=0;i<n;i++)
+{
+wt[i]=tat[i]-bt[i];
+swt=swt+wt[i];
+stat=stat+tat[i];
+}
+awt=(float)swt/n;
+atat=(float)stat/n;
+printf("process-no bursttime waitingtime aroundtime:");
+for (i=0;i<n;i++)
+printf("\n%d\t%d\t%d\t%d",i+1,bt[i],wt[i],tat[i]);
+printf("\n avg waiting time=%f\navg turnaround time=%f",awt,atat);
+}
+
+
+//1D)Priority
+
+#include<stdio.h>
+void main()
+{
+int i,j,pno[10],prior[10],bt[10],n,wt[10],tt[10],wl=0,tl=0,s;
+float aw,at;
+printf("enter the no of processes:");
+scanf("%d",&n) ;
+for(i=0;i<n;i++)
+{
+printf("the process%d:\n",i+1);
+printf ("enter the burst time of process:");
+scanf("%d",&bt[i]);
+printf("enter the priority of process:");
+scanf("%d",&prior[i]);
+pno[i]=i+1;
+}
+for(i=0;i<n;i++)
+{
+for(j=0;j<n;j++)
+{
+if(prior[i]<prior[j])
+{
+s=prior[i];
+prior[i]=prior[j];
+prior[j]=s;
+s=pno[i];
+pno[i]=pno[j];
+pno[j]=s;
+}}}
+for(i=0;i<n;i++)
+{
+wt[0]=0;
+tt[0]=bt[0];
+wt[i+1]=bt[i]+wt[i];
+tt[i+1]=tt[i]+bt[i+1];
+wl=wl+wt[i];
+tl=tl+tt[i];
+aw=wl/n;
+at=tl/n;
+}
+printf("\njob\tbt\twt\tat\tprior\n");
+for(i=0;i<n;i++)
+printf("%d\t%d\t%d\r%d\t%d\n",pno[i],bt[i],wt[i],tt[i],prior[i]);
+printf("aw=%f\nat=%f\n",aw,at);
+}
+
+
+//2A)
+
+#include<sys/types.h>
+#include<unistd.h>
+#include<sys/stat.h>
+#include<stdio.h>
+#include<fcntl.h>
+int main(int argc,char *argv[])
+{
+int i,fd1,fd2;
+char *file1,*file2,buf[2];
+file1=argv[1];
+file2=argv[2];
+printf("file1=%s file2=%s",file1,file2);
+fd1=open(file1,O_RDONLY,0777);
+fd2=creat(file2,0777);
+while(i=read(fd1,buf,1)>0)
+write(fd2,buf,1) ;
+remove(file1) ;
+close(fd1);
+close(fd2);
+}
+
+// ./a.out pat.c pattern1.c
+
+
+//2B)
+
+#include<stdio.h>
+#include<unistd.h>
+int main()
+{
+int fd;
+long position;
+fd = open("datafile.dat");
+if(fd!=-1)
+{
+position=lseek(fd,0L,2);
+if(position!=-1)
+printf("the length of datafile.dat is %ld bytes./n",position);
+else
+perror("lseek error");
+}
+else
+printf("Cannot open datafile.dat\n");
+close(fd);
+}
+
+//./a.out datafile.dat
+
+//2c)
+
+#include<stdio.h>
+#include<dirent.h>
+int main()
+{
+DIR *folder;
+struct dirent *entry;
+int files=0;
+folder = opendir("directory") ;
+if(folder==NULL)
+{
+perror("Unable to read directory");
+return(1) ;
+}
+while( (entry=readdir(folder) ) )
+{
+files++;
+printf( "File %3d: %s\n",files,entry->d_name ) ;
+}
+closedir (folder ) ;
+return 0;
+}
+
+
+
+//3)deadlock
+
+
+#include<stdio.h>
+struct da{
+int max[10],a1[10],need[10],before[10],after[10];
+}p[10];
+
+void main()
+{
+int i,j,k,l,r,n,tat[10],av[10],cn=0,cz=0,temp=0,c=0;
+printf("\n Enter the no. of processes:");
+scanf("%d",&n);
+printf("\n Enter The number of resources :");
+scanf("%d",&r);
+for(i=0;i<n;i++)
+{
+printf("Process %d\n",i+1);
+for(j=0;j<r;j++)
+{
+printf("maximum value for resources %d",j+1);
+scanf("%d",&p[i].max[j]);
+}
+for(j=0;j<r;j++)
+{
+printf("allocated from resource %d:",j+1);
+scanf("%d",&p[i].a1[j]);
+p[i].need[j]=p[i].max[j]-p[i].a1[i];
+av[i]=tat[i]-temp;
+temp=0;
+}
+printf("\n\t Resouces allocated needed total Availiable");
+for(i=0;i<n;i++)
+{
+printf("\n p %d\t",i+1);
+for(j=0;j<r;j++)
+printf("%d",p[i].max[j]);
+printf("\t");
+for(j=0;j<r;j++)
+printf("%d",p[i].a1[j]);
+printf("\t");
+for(j=0;j<r;j++);
+printf("%d",p[i].need[j]);
+printf("\t");
+for(j=0;j<r;j++)
+{
+if(i==0)
+printf("%d",tat[j]);
+}
+printf(" ");
+for(j=0;j<r;j++)
+{
+if(i==0)
+printf("%d",av[j]);
+} 
+}
+printf("\n\n\t Avail Before\t Avail After");
+for(l=0;l<n;l++)
+{
+for(i=0;i<n;i++)
+{
+for(j=0;j<r;j++)
+{
+if(p[i].need[j]>av[j])
+cn++;
+if(p[i].max[j]==0)
+cz++;
+}
+if(n==0 && cz!=r)
+{
+for(j=0;j<r;j++)
+{
+p[i].before[j]=av[j]-p[i].need[j];
+p[i].after[j]=p[i].before[j]+p[i].max[j];
+av[j]=p[i].after[j];
+p[i].max[j]=0;
+}
+printf("\nP%d\t",i+1);
+for(j=0;j<r;j++)
+printf("%d",p[i].before[j]);
+printf("\t");
+for(j=0;j<r;j++)
+printf("%d",p[i].after[j]);
+cn=0;
+cz=0;
+c++;
+break;
+}
+else
+{
+cn=0;cz=0;
+}
+}
+}
+if(c==n)
+printf("\n The above sequence is a safe sequence");
+else
+printf("\n Deadlock Occured");
+}
+}
+
+//4)Producer consumer
+
+#include<stdio.h>
+int main()
+{int buffer[10],bufsize=10,in=0,out=0,produce,consume,choice=0;
+while(choice!=3)
+{
+printf("\n1.produce\t2.consume\t3.Exit");
+printf("\nenter your choice:");
+scanf("%d",&choice);
+switch(choice)
+{
+case 1:
+if((in+1)%bufsize==out)
+printf("\nBuffer is full");
+else
+{
+printf("\nEnter the value:");
+scanf("%d",&produce);
+buffer[in]=produce;
+in=(in+1)%bufsize;
+}
+break;
+
+case 2:
+if(in==out)
+printf("\nBuffer is empty");
+else
+{
+consume=buffer[out];
+printf("\n the consumed value is %d",consume);
+out=(out+1)%bufsize;
+}
+break;
+}
+}
+return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
